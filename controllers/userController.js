@@ -4,13 +4,22 @@ const asyncHandler = require("express-async-handler");
 // Display User sign up form on GET.
 exports.user_signup_get = asyncHandler(async (req, res, next) => {
   // Render the user sign up form
-  res.send("NOT IMPLEMENTED: User sign up GET");
+  res.render("signup-form");
 });
 
 // Handle User sign up on POST.
 exports.user_signup_post = asyncHandler(async (req, res, next) => {
   // Process the form submission to sign up a new user
-  res.send("NOT IMPLEMENTED: User sign up POST");
+  try {
+    const user = new User({
+      username: req.body.username,
+      password: req.body.password,
+    });
+    const result = await user.save();
+    res.redirect("/");
+  } catch (err) {
+    return next(err);
+  }
 });
 
 // Display User login form on GET.

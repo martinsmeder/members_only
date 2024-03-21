@@ -3,6 +3,12 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+main form {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+}
+
 a {
-  color: #00B7FF;
+  color: #00b7ff;
 }

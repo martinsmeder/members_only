@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 
 // Display home page
 exports.index = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Site Home Page");
+  res.render("index");
 });
 
 // Display all member messages on home page.
