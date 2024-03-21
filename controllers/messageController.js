@@ -1,6 +1,11 @@
 const Message = require("../models/message");
 const asyncHandler = require("express-async-handler");
 
+// Display home page
+exports.index = asyncHandler(async (req, res, next) => {
+  res.send("NOT IMPLEMENTED: Site Home Page");
+});
+
 // Display all member messages on home page.
 exports.message_list = asyncHandler(async (req, res, next) => {
   // Render the home page with all member messages
