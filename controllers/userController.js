@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 
 // Display User sign up form on GET.
@@ -9,15 +10,71 @@ exports.user_signup_get = asyncHandler(async (req, res, next) => {
 
 // Handle User sign up on POST.
 exports.user_signup_post = asyncHandler(async (req, res, next) => {
-  // Process the form submission to sign up a new user
-  try {
-    const user = new User({
-      username: req.body.username,
-      password: req.body.password,
+  // Sanitize and validate user input using Express-validator
+  await body("first_name")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("First name must be specified.")
+    .run(req);
+
+  await body("last_name")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Last name must be specified.")
+    .run(req);
+
+  await body("username")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Username must be specified.")
+    .run(req);
+
+  await body("password")
+    .trim()
+    .isLength({ min: 6 })
+    .escape()
+    .withMessage("Password must be at least 6 characters long.")
+    .run(req);
+
+  await body("confirmPassword")
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Passwords do not match.");
+      }
+      return true;
+    })
+    .withMessage("Passwords do not match.")
+    .run(req);
+
+  // Extract validation errors from request
+  const errors = validationResult(req);
+
+  // If there are errors, render the form again with error messages
+  if (!errors.isEmpty()) {
+    return res.render("signup-form", {
+      title: "Sign Up",
+      errors: errors.array(),
     });
+  }
+
+  // Create a new user instance with sanitized data
+  const user = new User({
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    username: req.body.username,
+    password: req.body.password, // Password should be encrypted before saving to database
+    is_admin: req.body.is_admin === "on", // Assuming checkbox value will be 'on' when checked
+  });
+
+  try {
+    // Save the user to the database
     const result = await user.save();
     res.redirect("/");
   } catch (err) {
+    // Handle database errors
     return next(err);
   }
 });
