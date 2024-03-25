@@ -36,6 +36,9 @@ router.get("/login", user_controller.user_login_get);
 // POST request for login.
 router.post("/login", user_controller.user_login_post);
 
+// GET request for logging out.
+router.get("/logout", user_controller.user_logout_get);
+
 // GET request for joining club.
 router.get("/join", user_controller.join_club_get);
 

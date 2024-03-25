@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
+const passport = require("passport");
+const bcrypt = require("bcrypt");
 
 // Display User sign up form on GET.
 exports.user_signup_get = asyncHandler(async (req, res, next) => {
@@ -11,6 +13,8 @@ exports.user_signup_get = asyncHandler(async (req, res, next) => {
 // Handle User sign up on POST.
 exports.user_signup_post = asyncHandler(async (req, res, next) => {
   // Sanitize and validate user input using Express-validator
+  // Note: It's good practice to always use form validation on the backend, since
+  // a user easily can remove "required" on the client side
   await body("first_name")
     .trim()
     .isLength({ min: 1 })
@@ -60,13 +64,16 @@ exports.user_signup_post = asyncHandler(async (req, res, next) => {
     });
   }
 
-  // Create a new user instance with sanitized data
+  // Hash the password using bcrypt (10 is the saltRounds parameter)
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+  // Create a new user instance with sanitized data and hashed password
   const user = new User({
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     username: req.body.username,
-    password: req.body.password, // Password should be encrypted before saving to database
-    is_admin: req.body.is_admin === "on", // Assuming checkbox value will be 'on' when checked
+    password: hashedPassword, // Save hashed password to the database
+    is_admin: req.body.is_admin === "on",
   });
 
   try {
@@ -82,13 +89,22 @@ exports.user_signup_post = asyncHandler(async (req, res, next) => {
 // Display User login form on GET.
 exports.user_login_get = asyncHandler(async (req, res, next) => {
   // Render the user login form
-  res.send("NOT IMPLEMENTED: User login GET");
+  res.render("login-form", { title: "Login" });
 });
 
 // Handle User login on POST.
-exports.user_login_post = asyncHandler(async (req, res, next) => {
-  // Process the form submission to log in a user
-  res.send("NOT IMPLEMENTED: User login POST");
+exports.user_login_post = passport.authenticate("local", {
+  successRedirect: "/",
+  failureRedirect: "/login",
+  failureFlash: true, // Enable flash messages for displaying login failures
+});
+
+// Handle User logout on GET.
+exports.user_logout_get = asyncHandler(async (req, res, next) => {
+  req.logout(() => {
+    // Log out user (callback required)
+    res.redirect("/"); // Redirect to the home page after logout
+  });
 });
 
 // Display join club page on GET.

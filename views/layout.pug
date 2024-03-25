@@ -13,6 +13,11 @@ html(lang="en")
           li
             a(href="/") Home
           li
+            if currentUser
+              a(href="/logout", style="color: red;") Log out
+            else
+              a(href="/login") Log in
+          li
             a(href="/signup") Sign up
           li
             a(href="/join") Join club
