@@ -96,7 +96,6 @@ exports.user_login_get = asyncHandler(async (req, res, next) => {
 exports.user_login_post = passport.authenticate("local", {
   successRedirect: "/",
   failureRedirect: "/login",
-  failureFlash: true, // Enable flash messages for displaying login failures
 });
 
 // Handle User logout on GET.
@@ -109,12 +108,29 @@ exports.user_logout_get = asyncHandler(async (req, res, next) => {
 
 // Display join club page on GET.
 exports.join_club_get = asyncHandler(async (req, res, next) => {
-  // Render the join club page
-  res.send("NOT IMPLEMENTED: Join club GET");
+  res.render("join-club-form", { title: "Join the Club" });
 });
 
 // Handle join club on POST.
 exports.join_club_post = asyncHandler(async (req, res, next) => {
-  // Process the form submission to join the club
-  res.send("NOT IMPLEMENTED: Join club POST");
+  // Check if user is authenticated
+  if (!req.isAuthenticated()) {
+    return res.redirect("/login"); // Redirect to login page if not authenticated
+  }
+
+  const { passcode } = req.body;
+  const correctPasscode = "secret";
+
+  if (passcode === correctPasscode) {
+    // Update the user's membership status to approved
+    await User.findByIdAndUpdate(req.user._id, {
+      membership_status: "approved",
+    });
+    res.redirect("/");
+  } else {
+    res.render("join-club-form", {
+      title: "Join the Club",
+      error: "Invalid passcode",
+    });
+  }
 });

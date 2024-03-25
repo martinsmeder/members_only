@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1 Join the Club
+  
+  form(action="/join", method="POST")
+    label(for="passcode") Enter Passcode
+    input(type="text", name="passcode", required)
+    button(type="submit") Join Club
+  if error
+    p.error= error
