@@ -21,5 +21,8 @@ html(lang="en")
             a(href="/signup") Sign up
           li
             a(href="/join") Join club
+          if currentUser 
+            li 
+              a(href="/message/create") Create new message
     main
       block content

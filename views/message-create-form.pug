@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  h1 Create Message
+  form(action="/message/create", method="POST")
+    label(for="content") Content
+    textarea(name="content", rows="4", required)
+    button(type="submit") Create Message
