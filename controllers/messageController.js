@@ -15,12 +15,6 @@ exports.index = asyncHandler(async (req, res, next) => {
   }
 });
 
-// Display all member messages on home page.
-exports.message_list = asyncHandler(async (req, res, next) => {
-  // Render the home page with all member messages
-  res.send("NOT IMPLEMENTED: Message list");
-});
-
 // Display Message creation form on GET.
 exports.message_create_get = asyncHandler(async (req, res, next) => {
   // Render the message creation form

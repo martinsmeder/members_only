@@ -10,9 +10,6 @@ const message_controller = require("../controllers/messageController");
 /* GET home page. */
 router.get("/", message_controller.index);
 
-// GET request for list of all messages.
-router.get("/messages", message_controller.message_list);
-
 // GET request for creating a message
 router.get("/message/create", message_controller.message_create_get);
 
